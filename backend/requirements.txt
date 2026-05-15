@@ -6,4 +6,4 @@ numpy
 openpyxl
 pillow
 python-multipart
-tensorflow-cpu
+tensorflow
