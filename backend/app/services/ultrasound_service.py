@@ -11,9 +11,9 @@ import os
 import numpy as np
 from PIL import Image
 
-_MODEL_PATH = os.path.join(
-    os.path.dirname(__file__), "..", "..", "models", "pcos_efficientnet.h5"
-)
+# Robust path detection for Render/Local
+_BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+_MODEL_PATH = os.path.join(_BASE_DIR, "models", "pcos_efficientnet.h5")
 
 IMG_SIZE = (224, 224)
 
@@ -71,6 +71,12 @@ class UltrasoundService:
                 "confidence": 50.0,
                 "pcos_probability": 50.0,
                 "mock": True,
+                "debug": {
+                    "model_path": _MODEL_PATH,
+                    "exists": os.path.exists(_MODEL_PATH),
+                    "base_dir": _BASE_DIR,
+                    "cwd": os.getcwd()
+                }
             }
 
         img_tensor = self._preprocess(image_bytes)
@@ -112,6 +118,11 @@ class UltrasoundService:
             "confidence": round(confidence, 1),
             "pcos_probability": round(prob * 100, 1),
             "mock": False,
+            "debug": {
+                "model_path": _MODEL_PATH,
+                "exists": True,
+                "prob_raw": float(prob)
+            }
         }
 
 

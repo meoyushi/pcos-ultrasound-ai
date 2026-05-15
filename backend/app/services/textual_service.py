@@ -13,9 +13,8 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.impute import SimpleImputer
 
-_DATA_PATH = os.path.join(
-    os.path.dirname(__file__), "..", "..", "data", "PCOS_data_without_infertility.xlsx"
-)
+_BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+_DATA_PATH = os.path.join(_BASE_DIR, "data", "PCOS_data_without_infertility.xlsx")
 
 
 class TextualService:
