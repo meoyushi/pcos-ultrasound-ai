@@ -42,7 +42,7 @@ export const FIELDS = [
       { value: "4", label: "Irregular" },
     ],
   },
-  { name: "Cycle length(days)", label: "Cycle Length (days)", type: "number", group: "Menstrual", min: 14, max: 60, defaultValue: 28 },
+  { name: "Cycle length(days)", label: "Cycle Length (days)", type: "number", group: "Menstrual", min: 14, max: 180, defaultValue: 28 },
 
   // Symptoms (all Y/N)
   { name: "Weight gain(Y/N)", label: "Weight Gain", type: "yesno", group: "Symptoms" },

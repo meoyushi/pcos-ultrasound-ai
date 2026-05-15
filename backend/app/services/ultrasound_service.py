@@ -25,6 +25,7 @@ class UltrasoundService:
         self.model = None
         self._model_loaded = False
         self._mock_mode = False
+        self._load_error = None
 
     def _load_model(self):
         if self._model_loaded:
@@ -46,7 +47,9 @@ class UltrasoundService:
             self._model_loaded = True
             print("[UltrasoundService] Model loaded successfully.")
         except Exception as e:
-            print(f"[UltrasoundService] Failed to load model: {e}. Running in MOCK mode.")
+            err_msg = str(e)
+            print(f"[UltrasoundService] Failed to load model: {err_msg}. Running in MOCK mode.")
+            self._load_error = err_msg
             self._mock_mode = True
             self._model_loaded = True
 
@@ -75,7 +78,8 @@ class UltrasoundService:
                     "model_path": _MODEL_PATH,
                     "exists": os.path.exists(_MODEL_PATH),
                     "base_dir": _BASE_DIR,
-                    "cwd": os.getcwd()
+                    "cwd": os.getcwd(),
+                    "load_error": self._load_error
                 }
             }
 
