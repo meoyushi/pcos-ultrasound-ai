@@ -38,8 +38,8 @@ env/
 .env.production.local
 
 # Models and large datasets
-backend/models/*.h5
-data/
+# backend/models/*.h5
+# data/
 *.h5
 *.hdf5
 *.pkl
