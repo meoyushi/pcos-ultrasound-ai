@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
 
 import Home from "./pages/Home";
+import Auth from "./pages/Auth";
 import TextualPredict from "./pages/TextualPredict";
 import UltrasoundPredict from "./pages/UltrasoundPredict";
 import CombinedPredict from "./pages/CombinedPredict";
@@ -15,6 +16,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/auth" element={<Auth />} />
         <Route path="/predict/textual" element={<TextualPredict />} />
         <Route path="/predict/ultrasound" element={<UltrasoundPredict />} />
         <Route path="/predict/combined" element={<CombinedPredict />} />
