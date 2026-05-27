@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useNeoPage } from "../hooks/useNeoPage";
 import "./neoLanding.css";
 
 export default function Home() {
+  useNeoPage();
   const navigate = useNavigate();
   const rootRef = useRef(null);
   const dotRef = useRef(null);
@@ -249,11 +251,12 @@ export default function Home() {
         <div className="neo-hero-inner">
           <div className="neo-eyebrow">AI-Powered Women&apos;s Health</div>
           <h1 className="neo-hero-title">
-            Understand your
+            <span className="neo-hero-text">Understand your</span>
             <br />
-            <em>hormonal</em> health
+            <em>hormonal</em> <span className="neo-hero-text">health</span>
             <br />
-            with <strong>precision</strong>
+            <span className="neo-hero-text">with </span>
+            <strong>precision</strong>
           </h1>
           <p className="neo-hero-sub">
             Advanced multimodal AI for PCOS risk assessment — combining clinical data, ultrasound imaging, and ensemble

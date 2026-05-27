@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useNeoPage } from "../hooks/useNeoPage";
 import "./neoLanding.css";
 
 export default function Auth() {
+  useNeoPage();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
 
@@ -34,6 +36,14 @@ export default function Auth() {
 
   return (
     <div className="neo neo-auth">
+      <div className="neo-orb-container" aria-hidden="true">
+        <div className="neo-orb neo-orb-1" />
+        <div className="neo-orb neo-orb-2" />
+        <div className="neo-orb neo-orb-3" />
+        <div className="neo-orb neo-orb-4" />
+      </div>
+      <div className="neo-grid-lines" aria-hidden="true" />
+
       <nav className="neo-nav">
         <div className="neo-nav-logo" onClick={() => navigate("/")} role="button" tabIndex={0}>
           ⬡ <span>PCOS</span>AI

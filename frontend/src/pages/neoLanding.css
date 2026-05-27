@@ -1,29 +1,77 @@
 :root {
+  /* ═══════════════════════════════════════════════════════════════
+     BRAND PALETTE — change these 4 values to restyle the whole neo UI
+     ═══════════════════════════════════════════════════════════════ */
+  --neo-bg: #223a22; /* page background (was wrongly named --neo-text-dark) */
+  --neo-text-primary: #ffffff; /* main text: hero lines, headings, nav cream text */
+  --neo-text-accent: #a8c5a0; /* highlights: "hormonal", em, stats, labels */
+  --neo-text-muted: #8a9a8a; /* subtitles, footer, form hints */
+
+  /* UI accents (buttons, borders, glass) */
   --neo-sage: #7a9a7a;
-  --neo-sage-light: #a8c5a0;
+  --neo-sage-light: var(--neo-text-accent);
   --neo-sage-pale: #d4e8cc;
   --neo-sage-deep: #4a6b4a;
-  --neo-cream: #f5f0e8;
+  --neo-cream: var(--neo-text-primary);
   --neo-cream-warm: #ede6d6;
   --neo-cream-deep: #c8b99a;
   --neo-blush: #e8c4b8;
   --neo-blush-deep: #c49080;
   --neo-moss: #3d5c3d;
-  --neo-text-dark: #1a2a1a;
   --neo-text-mid: #4a5a4a;
-  --neo-text-light: #8a9a8a;
+  --neo-text-light: var(--neo-text-muted);
   --neo-glass-bg: rgba(245, 240, 232, 0.12);
   --neo-glass-border: rgba(168, 197, 160, 0.25);
+}
+
+/* Full-page theme while on home/auth (overrides index.css cream body) */
+html.neo-page-active,
+html.neo-page-active body {
+  background: var(--neo-bg) !important;
+  color: var(--neo-text-primary) !important;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+html.neo-page-active #root {
+  min-height: 100vh;
+}
+
+/* Beat index.css charcoal on headings (h1–h5 { color: #2c2c2c }) */
+html.neo-page-active h1,
+html.neo-page-active h2,
+html.neo-page-active h3,
+html.neo-page-active h4,
+html.neo-page-active h5 {
+  color: var(--neo-text-primary) !important;
+  -webkit-text-fill-color: unset !important;
 }
 
 /* Scope everything to `.neo` so other pages remain unchanged */
 .neo {
   font-family: "DM Sans", sans-serif;
-  background: var(--neo-text-dark);
-  color: var(--neo-cream);
+  background: var(--neo-bg);
+  color: var(--neo-text-primary);
   min-height: 100vh;
+  width: 100%;
   overflow-x: hidden;
   position: relative;
+  z-index: 0;
+  isolation: isolate;
+}
+
+.neo h1,
+.neo h2,
+.neo h3,
+.neo h4,
+.neo h5 {
+  font-family: "Cormorant Garamond", serif;
+  color: var(--neo-text-primary);
+  -webkit-text-fill-color: unset;
+}
+
+.neo a {
+  color: inherit;
 }
 
 .neo.neo-cursorless,
@@ -143,7 +191,7 @@
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 0;
+  z-index: -1;
   overflow: hidden;
 }
 
@@ -214,7 +262,7 @@
 .neo-grid-lines {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
   pointer-events: none;
   opacity: 0.06;
   background-image: linear-gradient(rgba(168, 197, 160, 1) 1px, transparent 1px),
@@ -225,7 +273,7 @@
 .neo-particles {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
   pointer-events: none;
 }
 
@@ -267,6 +315,8 @@
 .neo-hero-inner {
   max-width: 900px;
   text-align: center;
+  position: relative;
+  z-index: 2;
 }
 
 .neo-eyebrow {
@@ -310,24 +360,38 @@
 .neo-hero-title {
   font-family: "Cormorant Garamond", serif;
   font-size: clamp(3rem, 8vw, 6.5rem);
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.05;
   letter-spacing: -0.01em;
   margin-bottom: 1.5rem;
   animation: neo-fade-up 0.8s ease 0.1s both;
+  color: var(--neo-text-primary);
+  -webkit-text-fill-color: unset;
+  opacity: 1;
+  text-shadow:
+    0 0 1px rgba(0, 0, 0, 0.7),
+    0 0 24px rgba(0, 0, 0, 0.6);
+}
+
+.neo-hero-text {
+  color: var(--neo-text-primary);
+  -webkit-text-fill-color: unset;
+  opacity: 1;
 }
 
 .neo-hero-title em {
   font-style: italic;
-  color: var(--neo-sage-light);
+  color: var(--neo-text-accent);
+  -webkit-text-fill-color: unset;
 }
 
 .neo-hero-title strong {
   font-weight: 600;
-  background: linear-gradient(135deg, var(--neo-sage-pale), var(--neo-sage-light));
+  color: var(--neo-text-accent);
+  background-image: linear-gradient(135deg, var(--neo-sage-pale), var(--neo-text-accent));
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .neo-hero-sub {
@@ -467,11 +531,14 @@
   font-weight: 300;
   line-height: 1.15;
   margin-bottom: 1rem;
+  color: var(--neo-text-primary);
+  -webkit-text-fill-color: var(--neo-text-primary);
 }
 
 .neo-section-title em {
   font-style: italic;
-  color: var(--neo-sage-light);
+  color: var(--neo-text-accent);
+  -webkit-text-fill-color: var(--neo-text-accent);
 }
 
 .neo-section-sub {
@@ -571,7 +638,8 @@
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 0.75rem;
-  color: var(--neo-cream);
+  color: var(--neo-text-primary);
+  -webkit-text-fill-color: var(--neo-text-primary);
 }
 
 .neo-mode-card p {
@@ -686,11 +754,14 @@
   font-weight: 300;
   margin-bottom: 1rem;
   position: relative;
+  color: var(--neo-text-primary);
+  -webkit-text-fill-color: var(--neo-text-primary);
 }
 
-.neo-cta-inner em {
+.neo-cta-inner h2 em {
   font-style: italic;
-  color: var(--neo-sage-light);
+  color: var(--neo-text-accent);
+  -webkit-text-fill-color: var(--neo-text-accent);
 }
 
 .neo-cta-inner p {
@@ -877,11 +948,14 @@
   line-height: 1.1;
   margin-bottom: 1.5rem;
   position: relative;
+  color: var(--neo-text-primary);
+  -webkit-text-fill-color: var(--neo-text-primary);
 }
 
 .neo-auth-headline em {
   font-style: italic;
-  color: var(--neo-sage-light);
+  color: var(--neo-text-accent);
+  -webkit-text-fill-color: var(--neo-text-accent);
 }
 
 .neo-auth-desc {
