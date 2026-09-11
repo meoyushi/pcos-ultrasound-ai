@@ -5,9 +5,11 @@ import json
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 
 from app.services.textual_service import textual_service
-from app.services.ultrasound_service import ultrasound_service
+from app.services.ultrasound_service import ModelUnavailableError, ultrasound_service
 
 router = APIRouter()
+
+ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp"}
 
 # Ensemble weights
 TEXTUAL_WEIGHT = 0.6
@@ -25,6 +27,13 @@ async def predict_combined(
     except json.JSONDecodeError:
         raise HTTPException(status_code=400, detail="Invalid JSON in 'features' field.")
 
+    # --- Validate the image up front, before doing any inference work ---
+    if file.content_type not in ALLOWED_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid file type '{file.content_type}'. Accepted: jpg, png, webp.",
+        )
+
     # --- Textual prediction ---
     try:
         textual_result = textual_service.predict(features_dict)
@@ -32,18 +41,15 @@ async def predict_combined(
         raise HTTPException(status_code=400, detail=f"Textual prediction failed: {e}")
 
     # --- Ultrasound prediction ---
-    allowed = {"image/jpeg", "image/png", "image/webp"}
-    if file.content_type not in allowed:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Invalid file type '{file.content_type}'. Accepted: jpg, png, webp.",
-        )
-
     try:
         image_bytes = await file.read()
         ultrasound_result = ultrasound_service.predict(image_bytes)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Ultrasound prediction failed: {e}")
+    except ModelUnavailableError as e:
+        # Never blend a fabricated ultrasound probability into the ensemble —
+        # the result would look multimodal while being 0.6*textual + 20.
+        raise HTTPException(status_code=503, detail=str(e))
+    except Exception:
+        raise HTTPException(status_code=400, detail="Could not read the uploaded image.")
 
     # --- Weighted ensemble ---
     combined_pcos_prob = (

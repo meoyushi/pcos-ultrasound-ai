@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
-from app.services.ultrasound_service import ultrasound_service
+from app.services.ultrasound_service import ModelUnavailableError, ultrasound_service
 
 router = APIRouter()
 
@@ -20,10 +20,15 @@ async def predict_ultrasound(file: UploadFile = File(...)):
     try:
         image_bytes = await file.read()
         result = ultrasound_service.predict(image_bytes)
-        return {
-            "success": True,
-            "mode": "ultrasound",
-            **result,
-        }
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    except ModelUnavailableError as e:
+        # The model could not be loaded. Return 503 rather than a fabricated
+        # prediction, so callers can tell "unavailable" from "negative".
+        raise HTTPException(status_code=503, detail=str(e))
+    except Exception:
+        raise HTTPException(status_code=400, detail="Could not read the uploaded image.")
+
+    return {
+        "success": True,
+        "mode": "ultrasound",
+        **result,
+    }
