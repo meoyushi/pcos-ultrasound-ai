@@ -16,10 +16,15 @@ class TextualRequest(BaseModel):
 async def predict_textual(body: TextualRequest):
     try:
         result = textual_service.predict(body.features)
-        return {
-            "success": True,
-            "mode": "textual",
-            **result,
-        }
-    except Exception as e:
+    except ValueError as e:
+        # Deliberate, user-facing validation messages from TextualService
+        # (missing field, non-numeric value, non-positive height/weight).
         raise HTTPException(status_code=400, detail=str(e))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Prediction failed.")
+
+    return {
+        "success": True,
+        "mode": "textual",
+        **result,
+    }
