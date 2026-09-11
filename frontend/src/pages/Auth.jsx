@@ -46,7 +46,7 @@ export default function Auth() {
 
       <nav className="neo-nav">
         <div className="neo-nav-logo" onClick={() => navigate("/")} role="button" tabIndex={0}>
-          ⬡ <span>PCOS</span>AI
+          ⬡ <span>PCOS</span> Insight
         </div>
         <ul className="neo-nav-links">
           <li>
@@ -72,7 +72,7 @@ export default function Auth() {
       <div className="neo-auth-wrap">
         <div className="neo-auth-left">
           <div className="neo-auth-brand">
-            ⬡ PCOS<span className="neo-auth-brand-soft">AI</span>
+            ⬡ PCOS<span className="neo-auth-brand-soft"> Insight</span>
           </div>
           <h2 className="neo-auth-headline">
             Your health
@@ -82,24 +82,25 @@ export default function Auth() {
             <em>with you</em>
           </h2>
           <p className="neo-auth-desc">
-            Save predictions, track hormonal shifts over time, and share structured reports with your doctor — all in one secure place.
+            Save your assessments, follow changes over time, and share a structured summary with
+            your doctor — all in one place.
           </p>
           <div className="neo-auth-features">
             <div className="neo-auth-feature">
               <div className="neo-auth-feature-dot" />
-              End-to-end encrypted health data
+              Keep your assessment history in one place
             </div>
             <div className="neo-auth-feature">
               <div className="neo-auth-feature-dot" />
-              Export reports for your doctor
+              Export a summary for your clinician
             </div>
             <div className="neo-auth-feature">
               <div className="neo-auth-feature-dot" />
-              Track multiple assessments over time
+              Track changes between assessments
             </div>
             <div className="neo-auth-feature">
               <div className="neo-auth-feature-dot" />
-              Completely free for individuals
+              Free for individuals
             </div>
           </div>
         </div>
@@ -229,8 +230,6 @@ export default function Auth() {
 
                 <p className="neo-auth-legal">
                   By creating an account you agree to our Terms of Service.
-                  <br />
-                  Your health data is encrypted and never sold.
                 </p>
               </div>
             )}
