@@ -1,0 +1,38 @@
+{
+  "model": "EfficientNetB0 + GlobalAveragePooling + Dense(64) + Dense(1, sigmoid)",
+  "training": {
+    "phase1": {
+      "epochs": 8,
+      "lr": 0.001,
+      "backbone": "frozen"
+    },
+    "phase2": {
+      "epochs": 12,
+      "lr": 1e-05,
+      "unfrozen_from_layer": 200,
+      "batchnorm": "frozen"
+    }
+  },
+  "split": "disjoint 70/15/15 by image content hash (prepare_split.py)",
+  "n_train": 1344,
+  "n_val": 288,
+  "n_test": 289,
+  "test_loss": 0.0,
+  "test_accuracy": 1.0,
+  "test_roc_auc": 1.0,
+  "test_sensitivity": 1.0,
+  "test_specificity": 1.0,
+  "confusion_matrix": {
+    "tn": 172,
+    "fp": 0,
+    "fn": 0,
+    "tp": 117
+  },
+  "dataset_leakage": {
+    "leakage_detected": true,
+    "conclusion": "Image resolution alone separates the two classes with zero overlap. Any model trained on this data can score near-perfectly by learning the acquisition source rather than the pathology. No PCOS detection performance claim is supportable from this dataset.",
+    "width_only_baseline_test_accuracy": 0.8824,
+    "see": "docs/03-findings.md"
+  },
+  "METRICS_ARE_NOT_VALID": "The dataset is leaked: image resolution alone separates the classes. These scores measure acquisition source, not PCOS detection. Do not quote them."
+}
