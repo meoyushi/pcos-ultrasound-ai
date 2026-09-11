@@ -1,0 +1,50 @@
+{
+  "n_images": 1921,
+  "resolution_overlap": {
+    "normal_only": 4,
+    "pcos_only": 7,
+    "shared": 0,
+    "images_at_shared_resolution": 0
+  },
+  "per_class": {
+    "Normal": {
+      "n": 1142,
+      "width_range": [
+        315,
+        984
+      ],
+      "height_range": [
+        160,
+        848
+      ],
+      "median_bytes": 55328,
+      "formats": {
+        "JPEG": 1141,
+        "PNG": 1
+      }
+    },
+    "PCOS": {
+      "n": 779,
+      "width_range": [
+        225,
+        343
+      ],
+      "height_range": [
+        216,
+        343
+      ],
+      "median_bytes": 13733,
+      "formats": {
+        "JPEG": 779
+      }
+    }
+  },
+  "width_only_baseline": {
+    "rule": "predict PCOS if width <= 300",
+    "train_accuracy": 0.904,
+    "test_accuracy": 0.8824,
+    "majority_class_baseline": 0.5952
+  },
+  "leakage_detected": true,
+  "conclusion": "Image resolution alone separates the two classes with zero overlap. Any model trained on this data can score near-perfectly by learning the acquisition source rather than the pathology. No PCOS detection performance claim is supportable from this dataset."
+}

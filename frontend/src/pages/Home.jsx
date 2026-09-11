@@ -15,30 +15,30 @@ export default function Home() {
   const modes = useMemo(
     () => [
       {
-        title: "Textual Analysis",
+        title: "Clinical questionnaire",
         description:
-          "Input 14 clinical parameters including hormone levels, menstrual patterns, and metabolic markers to receive a Random Forest prediction.",
+          "Thirteen questions on cycle history, symptoms and lifestyle. Scored by a random forest trained on 541 patient records.",
         path: "/predict/textual",
         icon: "📋",
         tag: "Random Forest",
         featured: false,
       },
       {
-        title: "Ultrasound AI",
+        title: "Ultrasound scan",
         description:
-          "Upload your ovarian ultrasound image for deep analysis using a fine-tuned EfficientNetB0 model trained on curated medical imaging data.",
+          "Upload an ovarian ultrasound image for analysis by an EfficientNetB0 convolutional network.",
         path: "/predict/ultrasound",
         icon: "🔬",
         tag: "EfficientNetB0",
         featured: true,
       },
       {
-        title: "Combined Mode",
+        title: "Combined assessment",
         description:
-          "The most comprehensive option — a 60/40 weighted ensemble combining textual and imaging signals for maximum prediction confidence.",
+          "Both inputs together, fused as a 60/40 weighted average of the two probabilities.",
         path: "/predict/combined",
         icon: "⬡",
-        tag: "Ensemble Model",
+        tag: "Weighted ensemble",
         featured: false,
       },
     ],
@@ -217,7 +217,7 @@ export default function Home() {
 
       <nav className="neo-nav">
         <div className="neo-nav-logo" onClick={() => navigate("/")} role="button" tabIndex={0}>
-          ⬡ <span>PCOS</span>AI
+          ⬡ <span>PCOS</span> Insight
         </div>
         <ul className="neo-nav-links">
           <li>
@@ -241,72 +241,59 @@ export default function Home() {
       </nav>
 
       <section className="neo-hero">
-        <div className="neo-badge neo-badge-1">
-          <span className="neo-badge-dot" />
-          AI Model Active
-        </div>
-        <div className="neo-badge neo-badge-2">✦ EfficientNetB0 + Random Forest</div>
-        <div className="neo-badge neo-badge-3">◎ 3 Prediction Modes</div>
-
         <div className="neo-hero-inner">
-          <div className="neo-eyebrow">AI-Powered Women&apos;s Health</div>
           <h1 className="neo-hero-title">
-            <span className="neo-hero-text">Understand your</span>
+            <span className="neo-hero-text">A clearer read on</span>
             <br />
-            <em>hormonal</em> <span className="neo-hero-text">health</span>
-            <br />
-            <span className="neo-hero-text">with </span>
-            <strong>precision</strong>
+            <em>polycystic ovary syndrome</em>
           </h1>
           <p className="neo-hero-sub">
-            Advanced multimodal AI for PCOS risk assessment — combining clinical data, ultrasound imaging, and ensemble
-            prediction for actionable insights.
+            Answer a short clinical questionnaire, upload an ultrasound scan, or combine both.
+            You will get a probability and the reasoning behind it — not a diagnosis.
           </p>
           <div className="neo-ctas">
-            <Link className="neo-btn-primary" to="/auth?tab=signup">
-              Begin Assessment →
+            <Link className="neo-btn-primary" to="/predict/textual">
+              Start the questionnaire →
             </Link>
             <a className="neo-btn-ghost" href="#modes">
-              Explore Methods
+              See how it works
             </a>
           </div>
-        </div>
-
-        <div className="neo-scroll-hint" aria-hidden="true">
-          Scroll
-          <div className="neo-scroll-line" />
+          <p className="neo-hero-note">
+            Not a medical device. Results are a statistical estimate and must be reviewed by a
+            qualified clinician.
+          </p>
         </div>
       </section>
 
       <div className="neo-section" style={{ paddingTop: 0 }}>
         <div className="neo-stats-row neo-reveal">
           <div className="neo-stat-item">
-            <div className="neo-stat-num">
-              94<span style={{ fontSize: "1.5rem" }}>%</span>
-            </div>
-            <div className="neo-stat-label">Accuracy (EfficientNetB0)</div>
+            <div className="neo-stat-num">0.89</div>
+            <div className="neo-stat-label">ROC-AUC, clinical model</div>
+            <div className="neo-stat-note">5-fold cross-validation, 541 patients</div>
           </div>
           <div className="neo-stat-item">
-            <div className="neo-stat-num">14</div>
-            <div className="neo-stat-label">Clinical Parameters</div>
+            <div className="neo-stat-num">13</div>
+            <div className="neo-stat-label">Questions asked</div>
+            <div className="neo-stat-note">No bloodwork required</div>
           </div>
           <div className="neo-stat-item">
             <div className="neo-stat-num">3</div>
-            <div className="neo-stat-label">Prediction Modalities</div>
+            <div className="neo-stat-label">Assessment modes</div>
+            <div className="neo-stat-note">Clinical, imaging, combined</div>
           </div>
         </div>
       </div>
 
       <section id="modes" className="neo-section" style={{ paddingTop: "2rem" }}>
         <div className="neo-reveal">
-          <div className="neo-section-label">How It Works</div>
+          <div className="neo-section-label">How it works</div>
           <h2 className="neo-section-title">
             Three ways to <em>assess</em>
-            <br />
-            your health
           </h2>
           <p className="neo-section-sub">
-            Choose the method that fits your situation. Each mode uses a different AI model optimised for that data type.
+            Pick the one that matches the information you have. Each mode runs a different model.
           </p>
         </div>
 
@@ -332,26 +319,23 @@ export default function Home() {
       <div className="neo-cta-section">
         <div className="neo-cta-inner neo-reveal">
           <h2>
-            Ready to <em>understand</em> more?
+            Ready when <em>you</em> are
           </h2>
           <p>
-            Create a free account to save your assessments, track changes over time, and share results with your
-            healthcare provider.
+            The questionnaire takes about two minutes. Nothing you enter is stored or sent
+            anywhere beyond the prediction request.
           </p>
           <div className="neo-ctas">
-            <Link className="neo-btn-primary" to="/auth?tab=signup">
-              Create Free Account
-            </Link>
-            <Link className="neo-btn-ghost" to="/predict/combined">
-              Learn About PCOS
+            <Link className="neo-btn-primary" to="/predict/combined">
+              Run a combined assessment →
             </Link>
           </div>
         </div>
       </div>
 
       <footer className="neo-footer">
-        <span>⬡ PCOS Multimodal Predictor — Not a substitute for medical advice</span>
-        <span>Built with EfficientNetB0 · Random Forest · React 18</span>
+        <span>⬡ PCOS Insight — a screening aid, not a substitute for medical advice</span>
+        <span>Random Forest · EfficientNetB0 · FastAPI · React</span>
       </footer>
     </div>
   );

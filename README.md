@@ -4,9 +4,24 @@ An AI-powered web application that predicts **Polycystic Ovary Syndrome (PCOS)**
 
 | Mode | Input | Model |
 |------|-------|-------|
-| **Textual** | Clinical questionnaire (14 fields) | Random Forest (scikit-learn) |
-| **Ultrasound** | Ovarian ultrasound image | EfficientNetB0 (TensorFlow) |
+| **Textual** | Clinical questionnaire (13 fields) | Random Forest (scikit-learn) — 0.84 accuracy, 0.89 ROC-AUC (5-fold CV) |
+| **Ultrasound** | Ovarian ultrasound image | EfficientNetB0 transfer learning (TensorFlow) — **no validated accuracy; see [docs/03-findings.md](docs/03-findings.md)** |
 | **Combined** | Both of the above | 60/40 weighted ensemble |
+
+---
+
+> ### ⚠️ Known limitation — the ultrasound dataset is leaked
+>
+> `data/train/Normal` and `data/train/PCOS` are two different image collections, not one
+> cohort. They share **zero** image resolutions, and a single threshold on image *width*
+> classifies the held-out test split at **88%** accuracy (majority baseline 59.5%).
+>
+> Any model trained here — including this one — scores near-perfectly by learning the
+> acquisition source rather than the pathology. **No imaging accuracy figure from this
+> dataset is meaningful.** The clinical Random Forest is unaffected.
+>
+> Verify with `python ml/ultrasound/audit_leakage.py`. Full analysis:
+> [docs/03-findings.md](docs/03-findings.md).
 
 ---
 
@@ -22,7 +37,7 @@ pcos-ultrasound-ai/
 │   │   │   ├── ultrasound.py           # POST /api/predict/ultrasound
 │   │   │   └── combined.py             # POST /api/predict/combined
 │   │   └── services/
-│   │       ├── textual_service.py      # Random Forest singleton
+│   │       ├── textual_service.py      # Random Forest singleton (13 form features)
 │   │       └── ultrasound_service.py   # EfficientNetB0 singleton
 │   ├── data/
 │   │   └── PCOS_data_without_infertility.xlsx
@@ -30,12 +45,15 @@ pcos-ultrasound-ai/
 │   └── requirements.txt
 ├── frontend/
 │   ├── src/
-│   │   ├── main.jsx                    # React Router (5 routes)
+│   │   ├── main.jsx                    # React Router (6 routes)
 │   │   ├── index.css                   # Design system
 │   │   ├── components/
 │   │   │   └── SymptomForm.jsx
+│   │   ├── hooks/
+│   │   │   └── useNeoPage.js
 │   │   ├── pages/
 │   │   │   ├── Home.jsx
+│   │   │   ├── Auth.jsx                # UI mockup only — not wired to a backend
 │   │   │   ├── TextualPredict.jsx
 │   │   │   ├── UltrasoundPredict.jsx
 │   │   │   ├── CombinedPredict.jsx
@@ -51,7 +69,14 @@ pcos-ultrasound-ai/
 │   ├── train/{Normal, PCOS}/           # Ultrasound training images
 │   └── test/{Normal, PCOS}/            # Ultrasound test images
 ├── ml/
-│   └── ultrasound/src/train.py         # EfficientNetB0 training script
+│   ├── textual/
+│   │   ├── evaluate.py                 # cross-validates the served RF
+│   │   └── metrics.json                # checked-in CV results
+│   └── ultrasound/
+│       ├── src/prepare_split.py        # builds a disjoint train/val/test index
+│       ├── src/train.py                # EfficientNetB0 training script
+│       └── splits/{train,val,test}.csv
+├── docs/                                # 01-architecture, 02-models, 03-findings
 └── README.md
 ```
 
@@ -75,7 +100,10 @@ uvicorn app.main:app --reload --port 8000
 
 The API will be available at `http://localhost:8000`.
 
-> **Note:** The textual model trains on startup from the Excel dataset. The ultrasound model requires `pcos_efficientnet.h5` in `backend/models/` — if missing, it returns mock predictions.
+> **Note:** The textual model trains on startup from the Excel dataset. The ultrasound model requires
+> `pcos_efficientnet.h5` in `backend/models/`. If it is missing or fails to load, the ultrasound and
+> combined endpoints return **503** and `GET /` reports `"status": "degraded"` — the API never returns
+> a fabricated prediction.
 
 ### Frontend Setup
 
@@ -93,10 +121,32 @@ The dev server starts at `http://localhost:5173` and proxies `/api` requests to 
 ## Training the Ultrasound Model
 
 ```bash
+python ml/ultrasound/src/prepare_split.py   # build a disjoint train/val/test index
 python ml/ultrasound/src/train.py
 ```
 
-This trains an EfficientNetB0 model using transfer learning on the images in `data/train/{Normal,PCOS}/` and evaluates on `data/test/{Normal,PCOS}/`. The trained model is saved to `backend/models/pcos_efficientnet.h5`.
+`prepare_split.py` hashes every image under `data/`, collapses duplicates (3846 files -> 1921
+unique images), and writes a stratified 70/15/15 split to `ml/ultrasound/splits/*.csv`. This is
+required: `data/train/` and `data/test/` as shipped are byte-identical copies of each other.
+
+`train.py` then trains EfficientNetB0 with a frozen backbone, validates on the `val` split,
+evaluates once on the held-out `test` split, writes `ml/ultrasound/metrics.json`, and saves the
+model to `backend/models/pcos_efficientnet.h5`.
+
+> **The `.h5` currently in the repo must be retrained before deployment.** It was trained with a
+> double-normalisation bug (both training and serving divided by 255 before a network that
+> normalises internally). That is now fixed in both places, which means the existing artifact no
+> longer matches its own preprocessing.
+
+### Evaluating the textual model
+
+```bash
+python ml/textual/evaluate.py
+```
+
+Cross-validates the exact model the API serves (5-fold stratified, 5 repeats) and writes
+`ml/textual/metrics.json`. Current scores: **0.840 accuracy, 0.886 ROC-AUC, 0.731 sensitivity**
+against a 0.673 majority-class baseline.
 
 ---
 
@@ -143,6 +193,13 @@ All prediction endpoints return:
 }
 ```
 
+If the ultrasound model is unavailable, `/api/predict/ultrasound` and `/api/predict/combined`
+return **503** rather than a placeholder prediction:
+
+```json
+{ "detail": "Ultrasound model unavailable (...). Refusing to return a fabricated prediction." }
+```
+
 The `/api/predict/combined` endpoint also returns:
 
 ```json
@@ -160,4 +217,5 @@ The `/api/predict/combined` endpoint also returns:
 
 - **Frontend:** React 18, Vite, React Router v6, vanilla CSS
 - **Backend:** FastAPI, scikit-learn (Random Forest), TensorFlow/Keras (EfficientNetB0)
+- **Docs:** [`docs/01-architecture.md`](docs/01-architecture.md) · [`docs/02-models.md`](docs/02-models.md) · [`docs/03-findings.md`](docs/03-findings.md)
 - **Design:** DM Serif Display + DM Sans fonts, sage/cream healthcare palette

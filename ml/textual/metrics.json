@@ -1,0 +1,76 @@
+{
+  "model": "RandomForestClassifier",
+  "hyperparameters": {
+    "n_estimators": 300,
+    "max_depth": 6,
+    "random_state": 42,
+    "class_weight": "balanced"
+  },
+  "features": [
+    "Age (yrs)",
+    "Weight (Kg)",
+    "Height(Cm)",
+    "BMI",
+    "Blood Group",
+    "Cycle(R/I)",
+    "Cycle length(days)",
+    "Weight gain(Y/N)",
+    "hair growth(Y/N)",
+    "Skin darkening (Y/N)",
+    "Hair loss(Y/N)",
+    "Pimples(Y/N)",
+    "Fast food (Y/N)",
+    "Reg.Exercise(Y/N)"
+  ],
+  "n_features": 14,
+  "n_samples": 541,
+  "class_balance": {
+    "negative": 364,
+    "positive": 177
+  },
+  "majority_class_baseline_accuracy": 0.6728,
+  "cv": {
+    "type": "RepeatedStratifiedKFold",
+    "n_splits": 5,
+    "n_repeats": 5,
+    "random_state": 7
+  },
+  "scores": {
+    "accuracy": {
+      "mean": 0.8403,
+      "std": 0.0316
+    },
+    "roc_auc": {
+      "mean": 0.8859,
+      "std": 0.0318
+    },
+    "recall": {
+      "mean": 0.7309,
+      "std": 0.0669
+    },
+    "precision": {
+      "mean": 0.7707,
+      "std": 0.0557
+    },
+    "f1": {
+      "mean": 0.7489,
+      "std": 0.0527
+    }
+  },
+  "feature_importances": {
+    "Skin darkening (Y/N)": 0.1627,
+    "hair growth(Y/N)": 0.1279,
+    "Weight gain(Y/N)": 0.1163,
+    "Cycle length(days)": 0.0871,
+    "Cycle(R/I)": 0.0773,
+    "Fast food (Y/N)": 0.0719,
+    "BMI": 0.0693,
+    "Age (yrs)": 0.0659,
+    "Weight (Kg)": 0.0603,
+    "Height(Cm)": 0.0565,
+    "Pimples(Y/N)": 0.0378,
+    "Blood Group": 0.0267,
+    "Reg.Exercise(Y/N)": 0.0231,
+    "Hair loss(Y/N)": 0.0173
+  }
+}

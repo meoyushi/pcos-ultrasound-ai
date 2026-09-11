@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SymptomForm from "../components/SymptomForm";
-import { getDefaultValues } from "../utils/fields";
+import { getDefaultValues, toFeaturePayload } from "../utils/fields";
 
 const API = import.meta.env.VITE_API_URL || "";
 
@@ -20,11 +20,7 @@ export default function TextualPredict() {
     setError("");
     setLoading(true);
 
-    // Convert string values to numbers for the API
-    const features = {};
-    Object.entries(values).forEach(([key, val]) => {
-      features[key] = parseFloat(val) || 0;
-    });
+    const features = toFeaturePayload(values);
 
     try {
       const res = await fetch(`${API}/api/predict/textual`, {
